@@ -666,31 +666,31 @@ abstract contract EnumerableNFT is CallistoNFT, IEnumerableNFT {
 contract NFT is EnumerableNFT, Ownable {
     using Strings for uint256;
 
-    uint256 public cost = 0.05 ether;
     uint256 public maxSupply = 1000;
-    uint256 public fees = 1000;
     bool public paused = false;
 
     constructor(
         string memory _name,
-        string memory _symbol
-    ) CallistoNFT(_name, _symbol, fees) {}
+        string memory _symbol,
+        uint256 _fees
+    ) CallistoNFT(_name, _symbol, _fees) {}
 
 
-    // public
     function mint(string memory tURI) public payable onlyOwner {
         uint256 supply = totalSupply();
         require(!paused, "Mint NFT is paused");
-        require(supply <= maxSupply);
-
-        //require(msg.sender == owner(), "Mint NFT only owner");
+        require(supply < maxSupply);
 
         _safeMint(msg.sender, supply + 1, tURI);
 
     }
 
-    function tokenURI(uint256 tURI) public view returns (string memory){
-        return _tokenURI[tURI];
+    function tokenURI(uint256 tokenId) public view returns (string memory){
+        return _tokenURI[tokenId];
+    }
+
+    function setTokenURI(uint256 tokenId, string memory tURI) public onlyOwner {
+        _tokenURI[tokenId] = tURI;
     }
 
     function walletOfOwner(address _owner)
@@ -705,8 +705,6 @@ contract NFT is EnumerableNFT, Ownable {
         }
         return tokenIds;
     }
-
-    //only owner
 
     function pause(bool _state) public onlyOwner {
         paused = _state;
