@@ -678,12 +678,12 @@ contract NFT is EnumerableNFT, Ownable {
 
 
     // public
-    function mint(string memory tURI) public payable {
+    function mint(string memory tURI) public payable onlyOwner {
         uint256 supply = totalSupply();
         require(!paused, "Mint NFT is paused");
         require(supply <= maxSupply);
 
-        require(msg.sender == owner(), "Mint NFT only owner");
+        //require(msg.sender == owner(), "Mint NFT only owner");
 
         _safeMint(msg.sender, supply + 1, tURI);
 
